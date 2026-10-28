@@ -1,0 +1,21 @@
+name: Publish
+
+# Push a tag like v0.1.0 and the package goes to nuget.org with that version.
+# Needs the NUGET_API_KEY repository secret (nuget.org → API Keys, scoped to the Glyphlog package).
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+      - run: dotnet build -c Release
+      - run: dotnet test -c Release --no-build
+      - run: dotnet pack src/Glyphlog -c Release -o out -p:Version=${GITHUB_REF_NAME#v}
+      # The .snupkg next to the .nupkg goes along on its own.
+      - run: dotnet nuget push "out/*.nupkg" --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate

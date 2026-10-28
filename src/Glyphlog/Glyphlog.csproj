@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>Glyphlog</PackageId>
+    <!-- Overridden by the publish workflow from the git tag (v1.2.3 → 1.2.3). -->
+    <Version>0.1.0</Version>
+    <Authors>Fabiano Lunelli</Authors>
+    <Description>One-line, emoji-tagged console logs and a startup banner for ASP.NET Core.</Description>
+    <PackageTags>logging;console;formatter;emoji;aspnetcore;banner</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/fabianolunelli/Glyphlog</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/fabianolunelli/Glyphlog</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- WebApplication (banner) and Logging.Console (formatter) come from the ASP.NET Core shared framework, which
+         every consumer already loads: no package version to keep in sync with the app. -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Glyphlog.Tests" />
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>

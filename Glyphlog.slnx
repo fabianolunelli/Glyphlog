@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Glyphlog/Glyphlog.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Glyphlog.Tests/Glyphlog.Tests.csproj" />
+  </Folder>
+</Solution>
