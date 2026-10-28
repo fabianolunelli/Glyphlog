@@ -1,10 +1,15 @@
 name: Publish
 
 # Push a tag like v0.1.0 and the package goes to nuget.org with that version.
-# Needs the NUGET_API_KEY repository secret (nuget.org → API Keys, scoped to the Glyphlog package).
+# Authenticates with nuget.org Trusted Publishing (OIDC), so no API key is stored anywhere: it needs a policy on
+# nuget.org (Trusted Publishing) pointing at this repository and at this file, publish.yml.
 on:
   push:
     tags: ['v*']
+
+permissions:
+  id-token: write   # the OIDC token NuGet/login trades for a short-lived API key
+  contents: read
 
 jobs:
   publish:
@@ -17,5 +22,9 @@ jobs:
       - run: dotnet build -c Release
       - run: dotnet test -c Release --no-build
       - run: dotnet pack src/Glyphlog -c Release -o out -p:Version=${GITHUB_REF_NAME#v}
+      - uses: NuGet/login@v1
+        id: login
+        with:
+          user: fa.lunelli   # nuget.org account name — not a secret
       # The .snupkg next to the .nupkg goes along on its own.
-      - run: dotnet nuget push "out/*.nupkg" --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
+      - run: dotnet nuget push "out/*.nupkg" --api-key "${{ steps.login.outputs.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
